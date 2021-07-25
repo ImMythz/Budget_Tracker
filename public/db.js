@@ -7,10 +7,25 @@ const request = window.indexedDB.open('budget', budgetVersion)
 
 request.onupgradeneeded = (e) => {
     db = e.target.result
+
     if (db.objectStoreNames === 0) {
         const budgetCache = db.createObjectStore('budgetCache', { autoIncrement: true })
+    }   else {
+        console.log(errorCode)
     }
 } 
+
+request.onsuccess = (e) => {
+    console.log('Added' + e.target.result + 'successfully')
+    db = e.target.result
+    
+    if (navigator.onLine) {
+        console.log('DB ONLINE')
+        checkDB()
+    }   else {
+        console.log(errorCode)
+    }
+}
 
 request.onerror = (e) => {
     console.log(e.target.errorCode)
