@@ -18,7 +18,7 @@ request.onupgradeneeded = (e) => {
 request.onsuccess = (e) => {
     console.log('Added' + e.target.result + 'successfully')
     db = e.target.result
-    
+
     if (navigator.onLine) {
         console.log('DB ONLINE')
         checkDB()
@@ -58,3 +58,10 @@ const checkDB = () => {
         }
     }
 }
+
+const storeTransaction = (transaction) => {
+    const transaction = db.transaction(['budgetCache'],'readWrite')
+    const cache = transaction.objectStore('budgetCache')
+    cache.add(transaction)
+    console.log('Transaction saved')
+}   
