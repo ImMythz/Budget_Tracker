@@ -32,6 +32,14 @@ const checkDB = () => {
                 }
             })
             .then((response) => response.json())
+            .then((res) => {
+                if (res.length !== 0) {
+                    transaction = db.transaction(['budgetCache'],'readWrite')
+                    const currentCache = transaction.objectStore('budgetCache')
+                    currentCache.clear()
+                    console.log('Clearing Cache')
+                }
+            })
         }
     }
 }
