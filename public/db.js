@@ -15,3 +15,12 @@ request.onupgradeneeded = (e) => {
 request.onerror = (e) => {
     console.log(e.target.errorCode)
 }
+
+const checkDB = () => {
+    console.log('checking DB')
+    let transaction = db.transaction(['budgetCache'], 'readWrite')
+    const cache = transaction.objectStore('budgetCache')
+    const getCache = cache.getALL()
+
+    getCache = () => {}
+}
