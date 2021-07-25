@@ -3,17 +3,19 @@ let budgetVersion;
 
 console.log('Connected')
 
-const request = window.indexedDB.open('budget', budgetVersion)
+const request = indexedDB.open('budget_tracker_db', budgetVersion || 21)
 
 request.onupgradeneeded = (e) => {
     db = e.target.result
 
-    if (db.objectStoreNames === 0) {
-        const budgetCache = db.createObjectStore('budgetCache', { autoIncrement: true })
-    }   else {
-        console.log(errorCode)
+    if (db.objectStoreNames.length === 0) {
+        db.createObjectStore('budgetCache', { autoIncrement: true })
     }
 } 
+
+request.onerror = (e) => {
+    console.log(e.target.errorCode)
+}
 
 request.onsuccess = (e) => {
     console.log('Added' + e.target.result + 'successfully')
@@ -27,15 +29,13 @@ request.onsuccess = (e) => {
     }
 }
 
-request.onerror = (e) => {
-    console.log(e.target.errorCode)
-}
-
-const checkDB = () => {
+function checkDB()  {
     console.log('checking DB')
-    let transaction = db.transaction(['budgetCache'], 'readWrite')
+    let transaction = db.transaction(['budgetCache'], 'readwrite')
     const cache = transaction.objectStore('budgetCache')
-    const getCache = cache.getALL()
+    const getCache = cache.getAll()
+
+    console.log(getCache)
 
     getCache.onsuccess = () => {
         if ( getCache.result.length > 0 ) {
@@ -49,7 +49,7 @@ const checkDB = () => {
             .then((response) => response.json())
             .then((res) => {
                 if (res.length !== 0) {
-                    transaction = db.transaction(['budgetCache'],'readWrite')
+                    transaction = db.transaction(['budgetCache'],'readwrite')
                     const currentCache = transaction.objectStore('budgetCache')
                     currentCache.clear()
                     console.log('Clearing Cache')
@@ -59,9 +59,11 @@ const checkDB = () => {
     }
 }
 
-const storeTransaction = (transaction) => {
-    const transaction = db.transaction(['budgetCache'],'readWrite')
+const storeTransaction = (record) => {
+    const transaction = db.transaction(['budgetCache'],'readwrite')
     const cache = transaction.objectStore('budgetCache')
-    cache.add(transaction)
+    cache.add(record)
     console.log('Transaction saved')
 }   
+
+window.addEventListener('online', checkDB)
