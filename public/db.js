@@ -22,5 +22,16 @@ const checkDB = () => {
     const cache = transaction.objectStore('budgetCache')
     const getCache = cache.getALL()
 
-    getCache = () => {}
+    getCache.onsuccess = () => {
+        if ( getCache.result.length > 0 ) {
+            fetch('/api/transaction/bulk', {
+                method: 'POST',
+                body: JSON.stringify(getCache.result),
+                headers: {
+                    Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json',
+                }
+            })
+            .then((response) => response.json())
+        }
+    }
 }
