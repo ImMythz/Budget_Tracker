@@ -3,7 +3,7 @@ let budgetVersion;
 
 console.log('Connected')
 
-const request = indexedDB.open('budget_tracker_db', budgetVersion || 21)
+const request = window.indexedDB.open('budget_tracker_db', budgetVersion)
 
 request.onupgradeneeded = (e) => {
     db = e.target.result
@@ -43,7 +43,8 @@ function checkDB()  {
                 method: 'POST',
                 body: JSON.stringify(getCache.result),
                 headers: {
-                    Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json',
+                    Accept: 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json',
                 }
             })
             .then((response) => response.json())
