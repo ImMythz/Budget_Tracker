@@ -3,32 +3,24 @@ let budgetVersion;
 
 console.log('Connected')
 
+// Created IndexedDB
 const request = window.indexedDB.open('budget_tracker_db', budgetVersion || 21)
 
+
 request.onupgradeneeded = (e) => {
-    db = e.target.result
+    db = e.target.result;
 
     if (db.objectStoreNames.length === 0) {
         db.createObjectStore('budgetCache', { autoIncrement: true })
     }
 } 
 
+// Error Handling
 request.onerror = (e) => {
     console.log(e.target.errorCode)
 }
 
-request.onsuccess = (e) => {
-    console.log('Added' + e.target.result + 'successfully')
-    db = e.target.result
-
-    if (navigator.onLine) {
-        console.log('DB ONLINE')
-        checkDB()
-    }   else {
-        console.log(errorCode)
-    }
-}
-
+// Checks Database and pushes cached transactions 
 function checkDB()  {
     console.log('checking DB')
     let transaction = db.transaction(['budgetCache'], 'readwrite')
@@ -60,7 +52,19 @@ function checkDB()  {
     }
 }
 
-const storeTransaction = (record) => {
+request.onsuccess = (e) => {
+    console.log('Added' + e.target.result + 'successfully')
+    db = e.target.result
+
+    if (navigator.onLine) {
+        console.log('DB ONLINE')
+        checkDB()
+    }   else {
+        console.log(errorCode)
+    }
+}
+
+const saveRecord = (record) => {
     const transaction = db.transaction(['budgetCache'],'readwrite')
     const cache = transaction.objectStore('budgetCache')
     cache.add(record)
