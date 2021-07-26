@@ -3,7 +3,7 @@ let budgetVersion;
 
 console.log('Connected')
 
-const request = window.indexedDB.open('budget_tracker_db', budgetVersion)
+const request = window.indexedDB.open('budget_tracker_db', budgetVersion || 21)
 
 request.onupgradeneeded = (e) => {
     db = e.target.result
